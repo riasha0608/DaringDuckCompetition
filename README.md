@@ -1,1 +1,2 @@
 # DaringDuckCompetition
+# YAY COMP SCI!
