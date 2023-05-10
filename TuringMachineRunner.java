@@ -34,7 +34,7 @@ public class TuringMachineRunner {
 
         //TRANSITION FUNCTION TO TEST: (q0,0) = (q1,0,R); (q1,0) = (q0,0,R); (q0,1) = (q0,1,R); (q1,1) = (q1,1,R)
         
-
+        
         //START STATE
         System.out.println("What is your start state?");
         String startState = in.nextLine();
@@ -87,24 +87,36 @@ public class TuringMachineRunner {
             tran1 = new Transition(inputTape, transitions[i]);
             
         } //END OF HUGE FOR LOOP
-
-        if (inputTape.list.indexOf(inputTape.head) == inputTape.list.size() - 1) {
+        
+        if (lastIndexOf(inputTape.list, inputTape.head) == inputTape.list.size() - 1) {
             //if currentstate == acceptstate (one of them)
             boolean accepts = false;
             for (int i = 0; i < acceptStates.length; i++) {
                 if (inputTape.currentState.equals(acceptStates[i])) {
+                    System.out.print("Output: ");
                     printOutput(inputTape);
                     accepts = true;
-                    System.out.println("ACCEPTED! Final State: " + inputTape.currentState);
+                    System.out.println("\nACCEPTED! Final State: " + inputTape.currentState);
                 }
             }
             if (accepts == false) {
                 System.out.println("REJECTED - did not end on an accept state; Current State is " + inputTape.currentState);
             }
         }
-        System.out.println("REJECTED - tape still has more left: Current State is " + inputTape.currentState);
+        else {
+            System.out.println("REJECTED - tape still has more left: Current State is " + inputTape.head);
+        }
+        
     }
-
+    public static int lastIndexOf(LinkedList<Integer> list, int element) {
+        int index = -1; //not in list
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == element) {
+                index = i;
+            }
+        }
+        return index;
+    }
     //takes ONE transition which is a loop and processes it [will be changing head of tape through ]
     public static void processLoop(Transition tran, Tape tape) {
         // keeps going through the tape until it hits a value that is not equal to the transitions-current-input
