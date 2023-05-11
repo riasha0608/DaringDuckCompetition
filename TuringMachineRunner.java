@@ -123,17 +123,17 @@ public class TuringMachineRunner {
             }
             if (accepts == false) {
                 System.out.println("REJECTED - did not end on an accept state; Current State is " + inputTape.currentState);
-                System.out.println("\n output: " + inputTape.outputBig);
+                System.out.println("\n output: " + inputTape.list);
             }
         }
         else {
             System.out.println("REJECTED - tape still has more left: Current State is " + inputTape.currentState + "\n" +
             lastIndexOf(inputTape.list, inputTape.head) + "\n" + inputTape.list.size() + " head: " + inputTape.head);
-            System.out.println("\n output: " + inputTape.outputBig);
+            System.out.println("\n output: " + inputTape.list);
 
         }
-        
-    }
+      }  
+    
     public static int lastIndexOf(LinkedList<Integer> list, int element) {
         int index = -1; //not in list
         for (int i = 0; i < list.size(); i++) {
@@ -151,24 +151,26 @@ public class TuringMachineRunner {
         //theres 2 
         while (tape.head == currentinp1) {
             if (tran.direction.equals("L")) {
+                tape.write(tran);
                 tape.goLeft();
                 //write
-                tape.write(tran);
+                
                 System.out.println(tape.head + " WENT LEFT");
                 System.out.println(tape.currentState + " aaaa");
             }
             else {
+                tape.write(tran);
                 tape.goRight();
                 //write
-                tape.write(tran);
+                
                 System.out.println(tape.head + " WENT RIGHT");
             }
         } //010000002
     }
 
     public static void printOutput (Tape tape) {
-        for (int i = 0; i < tape.outputBig.size(); i++) {
-            System.out.print(tape.outputBig.get(i));
+        for (int i = 0; i < tape.list.size(); i++) {
+            System.out.print(tape.list.get(i));
         }
     }
 }

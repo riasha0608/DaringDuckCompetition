@@ -13,10 +13,13 @@ public class Tape {
     String currentState;
     int currentInp;
     int head; //value of head of tape
-    LinkedList<Integer> outputBig = new LinkedList<>(); //just keeps adding to it
+    int headCounter = 0;
+    int NullSymbol;
+    //LinkedList<Integer> outputBig = new LinkedList<>(); //just keeps adding to it
         
     // Tape constructor
     public Tape (String input, int nullSymbol) {
+        NullSymbol = nullSymbol;
         //CONVERT string to linkedlist
         if (input == null) {
             list.add(nullSymbol);
@@ -27,17 +30,20 @@ public class Tape {
             }
         }
         head = list.get(0);
+        headCounter = 0;
     }
 
     // RESIZE
     public LinkedList<Integer> resize(String direction){
         if (direction.equals("L")) {
-            list.add(0, 0);
+            list.add(0, NullSymbol);
             head = list.get(0); //first thing in tape
+            headCounter = 0;
         }
         else {
-            list.add(0);
+            list.add(NullSymbol);
             head = list.get(list.size() - 1); //final thing in tape
+            headCounter = list.get(list.size()-1);
         }
         return list; //not sure if we'll have this return smthing or just add but
     }
@@ -51,6 +57,7 @@ public class Tape {
             resize("L");
         }
         head = list.get(newIndex);
+        headCounter = newIndex;
     }
 
     public void goRight() {
@@ -60,15 +67,13 @@ public class Tape {
             resize("R");
         }
         head = list.get(newIndex);
+        headCounter = newIndex;
     }
 
     public void write(Transition tran) {
-        if (tran.direction.equals("L")) {
-            //
-        }
-        else {
-            outputBig.add(tran.output);
-        }
+    
+        list.set(headCounter, tran.output);
+    
         
     }
 
