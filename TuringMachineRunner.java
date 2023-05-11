@@ -56,16 +56,26 @@ public class TuringMachineRunner {
         Transition tran1 = new Transition(inputTape, transitions[0]);
         inputTape.currentState = startState;
 
-        for (int i = 0; i < transitions.length; i++) {
+        boolean wasLoop = false;
+
+        LinkedList<Transition> unusedTrans = new LinkedList<>();
+
+        for (int i = 0; i < transitions.length - 1; i++) {
             // check if currentTransitionInput = currentTapeInput, if yes then move
             // to move, we change currentstate to what the transition says is hte nextstate
+            wasLoop = false;
+            System.out.println(tran1.toString());
             if (inputTape.currentState.equals(tran1.currentState)) {
+                System.out.println("states are equal");
                 //is the head of the tape = current input
                 if (inputTape.head == tran1.currentInput) {
-                    //
+                    System.out.println("HEAD equals");
                     if (tran1.currentState.equals(tran1.nextState)) {
                         // LOOPS
-                        processLoop(tran1, inputTape);
+                        processLoop(tran1, inputTape, tran1.currentInput);
+                        System.out.println(inputTape.head + " LOOP IS DONE");
+                        tran1 = new Transition(inputTape, transitions[i+1]);
+                        wasLoop = true;
                     }
                     //not loop so we move!
                     else if (tran1.direction.equals("L")) {
@@ -78,13 +88,43 @@ public class TuringMachineRunner {
                         //write
                         inputTape.write(tran1);
                     }
+                } // END OF IF
+                //so since it could be a valid transition but like it doesn't know to go back and check for another transition
+                else {
+                    unusedTrans.add(tran1);
+                    for (int j = 0; j < unusedTrans.size(); j++) {
+                        // check if inputTape.head == tran1.currentInput but like in this list so like
+                        if (unusedTrans.get(j).currentInput == inputTape.head) {
+                            System.out.println("INPUT EQUAL BUT ITS OUR SECOND TIME" + unusedTrans.get(j).toString());
+                            if (unusedTrans.get(j).currentState.equals(unusedTrans.get(j).nextState)) {
+                                // LOOPS
+                                processLoop(unusedTrans.get(j), inputTape, unusedTrans.get(j).currentInput);
+                                System.out.println(inputTape.head + " OLDDDDDD LOOP");
+                                tran1 = new Transition(inputTape, transitions[i+1]);
+                                wasLoop = true;
+                            }
+                            //not loop so we move!
+                            else if (unusedTrans.get(j).direction.equals("L")) {
+                                System.out.println("GOING LEFT BUT IN SECOND");
+                                inputTape.goLeft();
+                                //write
+                                inputTape.write(tran1);
+                            }
+                            else { //needs to handle stay still "-"
+                            System.out.println("GOING RIGHT BUT IN SECOND");
+                                inputTape.goRight();
+                                //write
+                                inputTape.write(tran1);
+                            }
+                        }
+                    } 
                 }
+                
             }
-            //if states r not equal, don't move states but move to next transition
-            // ????
-
-            //inputTape.head = Integer.valueOf(input.substring(i, input.length()-1));
-            tran1 = new Transition(inputTape, transitions[i]);
+    
+            if (wasLoop != true) {
+                tran1 = new Transition(inputTape, transitions[i+1]);
+            }
             
         } //END OF HUGE FOR LOOP
         
@@ -104,7 +144,9 @@ public class TuringMachineRunner {
             }
         }
         else {
-            System.out.println("REJECTED - tape still has more left: Current State is " + inputTape.head);
+            System.out.println("REJECTED - tape still has more left: Current State is " + inputTape.currentState + "\n" +
+            lastIndexOf(inputTape.list, inputTape.head) + "\n" + inputTape.list.size() + " head: " + inputTape.head
+            );
         }
         
     }
@@ -118,11 +160,12 @@ public class TuringMachineRunner {
         return index;
     }
     //takes ONE transition which is a loop and processes it [will be changing head of tape through ]
-    public static void processLoop(Transition tran, Tape tape) {
+    public static void processLoop(Transition tran, Tape tape, int currentinp1) {
         // keeps going through the tape until it hits a value that is not equal to the transitions-current-input
-    
-        //will break when head == tran.currentInput
-        while (tape.head != tran.currentInput) {
+        //will break when head != tran.currentInput
+        System.out.println(tape.head + " ABOUT TO LOOP " + tran.currentInput);
+        //theres 2 
+        while (tape.head == currentinp1) {
             if (tran.direction.equals("L")) {
                 tape.goLeft();
                 //write
@@ -132,8 +175,9 @@ public class TuringMachineRunner {
                 tape.goRight();
                 //write
                 tape.write(tran);
+                System.out.println(tape.head + " WENT RIGHT");
             }
-        }
+        } //010000002
     }
 
     public static void printOutput (Tape tape) {
