@@ -51,7 +51,6 @@ public class Tape {
             resize("L");
         }
         head = list.get(newIndex);
-        //smthing w output
     }
 
     public void goRight() {
@@ -64,7 +63,13 @@ public class Tape {
     }
 
     public void write(Transition tran) {
-        outputBig.add(tran.output);
+        if (tran.direction.equals("L")) {
+            //
+        }
+        else {
+            outputBig.add(tran.output);
+        }
+        
     }
 
     public String toString() {
